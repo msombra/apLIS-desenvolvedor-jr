@@ -1,7 +1,11 @@
 import { Pencil, Trash2 } from 'lucide-react';
 
-const DataTable = ({ type, loadList, data, openModalEdit, deleteMedico }) => {
+const DataTable = ({ type, loadList, data, openModalEdit, deleteData }) => {
   const isMedico = type === 'medicos'; // lida com o tipo da página (medicos ou pacientes)
+
+  const formatCPF = cpf => {
+    return `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9)}`;
+  };
 
   return (
     <div className="card shadow-sm mt-4">
@@ -42,9 +46,11 @@ const DataTable = ({ type, loadList, data, openModalEdit, deleteMedico }) => {
                     // Listagem de Pacientes
                     <>
                       <td>{item.nome}</td>
-                      <td>{item.dataNasc}</td>
+                      <td>
+                        {new Date(item.dataNascimento).toLocaleDateString('pt-BR')}
+                      </td>
                       <td>{item.carteirinha}</td>
-                      <td>{item.cpf}</td>
+                      <td>{formatCPF(item.cpf)}</td>
                     </>
                   )}
                   {/* Botões de Ação */}
@@ -59,7 +65,7 @@ const DataTable = ({ type, loadList, data, openModalEdit, deleteMedico }) => {
                     <button 
                       className="btn btn-outline-danger btn-sm" 
                       title="Excluir"
-                      onClick={() => deleteMedico(item.id)}
+                      onClick={() => deleteData(item.id)}
                     >
                       <Trash2 size={18} />
                     </button>

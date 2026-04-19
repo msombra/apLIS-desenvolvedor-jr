@@ -26,24 +26,35 @@ const App = () => {
       transition: Bounce,
     };
 
-  // Rotina para listar Médicos
+  // Rotina para listar dados (médicos ou pacientes)
   const [medicos, setMedicos] = useState([]);
-  const [medicoEdit, setMedicoEdit] = useState([]);
+  const [pacientes, setPacientes] = useState([]);
+  const [dataEdit, setDataEdit] = useState([]);
 
-  const getMedicos = async () => {
+  const getData = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/medicos');
-      setMedicos(res.data)
-      setLoadList(false)
+      setLoadList(true); // Inicia carregamento
+      let res;
+
+      if (activeTab === 'medicos') {
+        res = await axios.get('http://localhost:8000/medicos');
+        setMedicos(res.data);
+      } else {
+        res = await axios.get('http://localhost:3000/pacientes');
+        setPacientes(res.data);
+      }
+
+      setLoadList(false);
     } catch (err) {
       console.error(err);
       toast.error('Erro ao carregar os dados', toastConfig);
+      setLoadList(false); // Para carregamento mesmo em erro
     }
   }
 
   // Rotina para cadastrar e atualizar Médico
   const upsertMedico = async (data) => {
-    let url = 'http://localhost:8000/medicos';
+    let url = activeTab === 'medicos' ? 'http://localhost:8000/medicos' : 'http://localhost:3000/pacientes';
 
     if (data.id !== undefined && data.id !== null) {
       url += `/${data.id}`;
@@ -51,7 +62,7 @@ const App = () => {
 
     try {
       const res = await axios.post(url, data);
-      getMedicos();
+      getData();
       setShowModal(false);
 
       if (res.data.status === 'success') {
@@ -65,12 +76,13 @@ const App = () => {
   }
 
   // Abre modal edit
-  const openModalEdit = (isOpen, dataId) => {
+  const openModalEdit = (isOpen, id) => {
+    const url = activeTab === 'medicos' ? `http://localhost:8000/medicos/${id}` : `http://localhost:3000/pacientes/${id}`;
     setTypeModal('edit');
 
-    axios.get(`http://localhost:8000/medicos/${dataId}`)
+    axios.get(url)
       .then(res => {
-        setMedicoEdit(res.data[0]);
+        setDataEdit(res.data[0]);
         setShowModal(isOpen);
       })
       .catch(err => {
@@ -79,12 +91,14 @@ const App = () => {
   }
 
   // Rotina para deletar Médico
-  const deleteMedico = async (id) => {
+  const deleteData = async (id) => {
+    const url = activeTab === 'medicos' ? `http://localhost:8000/medicos/${id}` : `http://localhost:3000/pacientes/${id}`;
+
     if (confirm('Deseja remover o registro?')) {
       try {
-        const res = await axios.delete(`http://localhost:8000/medicos/${id}`);
+        const res = await axios.delete(url);
         
-        getMedicos();
+        getData();
 
         if (res.data.status === 'success') {
           toast.success(res.data.message, toastConfig);
@@ -98,13 +112,13 @@ const App = () => {
   }
 
   useEffect(() => {
-    getMedicos()
-  }, [setMedicos]);
+    getData()
+  }, [activeTab]);
 
   // Dados a serem renderizados na tabela
   const dataList = {
     medicos : medicos,
-    pacientes : []
+    pacientes : pacientes
   };
 
   return (
@@ -118,7 +132,7 @@ const App = () => {
           </span>
           <button className="btn btn-primary d-flex align-items-center" onClick={() => {
             setTypeModal('create'),
-            setMedicoEdit(''),
+            setDataEdit(''),
             setShowModal(true)
           }}>
             <Plus size={18} className="me-1" /> Novo
@@ -131,7 +145,7 @@ const App = () => {
             loadList={loadList}
             data={dataList[activeTab]} 
             openModalEdit={openModalEdit} 
-            deleteMedico={deleteMedico}
+            deleteData={deleteData}
           />
         </div>
       </main>
@@ -142,7 +156,7 @@ const App = () => {
         typePage={activeTab} 
         typeForm={typeModal}
         sendFormData={upsertMedico}
-        formData={medicoEdit}
+        formData={dataEdit}
       />
 
       <ToastContainer />

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { PatternFormat } from 'react-number-format';
 
 const FormModal = ({ isOpen, onClose, typePage, typeForm, sendFormData, formData }) => {
   if (!isOpen) return null;
+  console.log(formData);
   const isMedico = typePage === 'medicos'; // lida com o tipo da página (medicos ou pacientes)
   const isCreate = typeForm === 'create'; // lida com o tipo do formulário (create ou edit)
 
@@ -20,13 +22,28 @@ const FormModal = ({ isOpen, onClose, typePage, typeForm, sendFormData, formData
   ];
 
   // lida com validação e envio dos dados do formulário
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
-    defaultValues: {
-      nome: formData?.nome || '',
-      CRM: formData?.CRM || '',
-      UFCRM: formData?.UFCRM || '',
-    }
-  });
+  const fields = isMedico
+    ?
+      {
+        nome: formData?.nome || '',
+        CRM: formData?.CRM || '',
+        UFCRM: formData?.UFCRM || ''
+      } 
+    :
+      {
+        nome: formData?.nome || '',
+        dataNascimento: formData?.dataNascimento || '',
+        carteirinha: formData?.carteirinha || '',
+        cpf: formData?.cpf || ''
+      };
+
+  const {
+    register, 
+    handleSubmit, 
+    formState: { errors }, 
+    reset, 
+    control 
+  } = useForm({ defaultValues: fields });
 
   useEffect(() => {
     if (formData && Object.keys(formData).length > 0) {
@@ -34,6 +51,9 @@ const FormModal = ({ isOpen, onClose, typePage, typeForm, sendFormData, formData
         nome: formData.nome || '',
         CRM: formData.CRM || '',
         UFCRM: formData.UFCRM || '',
+        dataNascimento: formData.dataNascimento || '',
+        carteirinha: formData.carteirinha || '',
+        cpf: formData.cpf || '',
       });
     }
   }, [formData, reset]);
@@ -104,17 +124,41 @@ const FormModal = ({ isOpen, onClose, typePage, typeForm, sendFormData, formData
                   {/* Input Data Nasc. */}
                   <div className="mb-3">
                     <label className="form-label">Data de Nascimento</label>
-                    <input type="date" className="form-control" />
+                    <input type="date" 
+                      className={`form-control ${errors?.dataNascimento && 'is-invalid'}`} 
+                      { ...register('dataNascimento', {required: true}) } 
+                    />
+                    {errors?.dataNascimento?.type === 'required' && <div className='invalid-feedback'>Preenchimento obrigatório</div>}
                   </div>
                   {/* Input Carteirinha */}
                   <div className="mb-3">
                     <label className="form-label">Nº Carteirinha</label>
-                    <input type="text" className="form-control" />
+                    <input type="text" 
+                      className={`form-control ${errors?.carteirinha && 'is-invalid'}`} 
+                      { ...register('carteirinha', {required: true}) } 
+                    />
+                    {errors?.carteirinha?.type === 'required' && <div className='invalid-feedback'>Preenchimento obrigatório</div>}
                   </div>
                   {/* Input CPF */}
                   <div className="mb-3">
                     <label className="form-label">CPF</label>
-                    <input type="text" className="form-control" placeholder="000.000.000-00" />
+                    <Controller
+                      name="cpf"
+                      control={control}
+                      rules={{ required: true, minLength: 11 }}
+                      render={({ field: { onChange, value } }) => (
+                        <PatternFormat
+                          value={value}
+                          onValueChange={(values) => onChange(values.value)}
+                          displayType="input"
+                          format="###.###.###-##"
+                          mask="_"
+                          className={`form-control ${errors?.cpf && 'is-invalid'}`}
+                        />
+                      )}
+                    />
+                    {errors?.cpf?.type === 'required' && <div className='invalid-feedback'>Preenchimento obrigatório</div>}
+                    {errors?.cpf?.type === 'minLength' && <div className='invalid-feedback'>CPF inválido</div>}
                   </div>
                 </>
               )}
