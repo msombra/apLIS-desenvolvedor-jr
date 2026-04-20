@@ -76,7 +76,7 @@ app.get('/pacientes/:id', (req, res) => {
 });
 
 // atualiza um dado
-app.post('/pacientes/:id', (req, res) => {
+app.put('/pacientes/:id', (req, res) => {
     const { id } = req.params;
     const { nome, dataNascimento, carteirinha, cpf } = req.body;
     conn.query('UPDATE pacientes SET nome = ?, dataNascimento = ?, carteirinha = ?, cpf = ? WHERE id = ?', [nome, dataNascimento, carteirinha, cpf, id], (err, results) => {

@@ -29,8 +29,8 @@ if ($segments[0] === 'medicos' && $method === 'GET') {
     }
 }
 
-// Rota: POST /medicos/{id} - Atualiza um médico existente
-if ($segments[0] === 'medicos' && $method === 'POST') {
+// Rota: PUT /medicos/{id} - Atualiza um médico existente
+if ($segments[0] === 'medicos' && $method === 'PUT') {
     if (isset($segments[1])) {
         $controller->update($segments[1]);
     }
