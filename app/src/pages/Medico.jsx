@@ -224,6 +224,9 @@ const Medico = () => {
                             <input type="text" 
                                 className={`form-control ${errors?.CRM && 'is-invalid'}`} 
                                 { ...register('CRM', {required: true, maxLength: 10}) } 
+                                onChange={({ target }) => {
+                                    target.value = target.value.replace(/\D/g, '');
+                                }}
                             />
                             {errors?.CRM?.type === 'required' && <div className='invalid-feedback'>Preenchimento obrigatório</div>}
                             {errors?.CRM?.type === 'maxLength' && <div className='invalid-feedback'>Máximo 10 dígitos</div>}
