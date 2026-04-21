@@ -48,6 +48,7 @@ apLIS-desenvolvedor-jr/
 │   ├── 📁 vendor/                         # Dependências Composer
 │   │   ├── autoload.php
 │   │   └── composer/
+│   ├── .env                               # Arquivo env
 │   ├── composer.json                      # Dependências PHP
 │   ├── composer.lock                      # Lock de versões PHP
 │   └── README.md                          # README do backend
@@ -56,16 +57,13 @@ apLIS-desenvolvedor-jr/
 │   ├── 📁 src/
 │   │   ├── api.js                         # Rotas da API
 │   │   └── db_config.js                   # Configuração de banco
+│   │   └── .env                           # Arquivo .env
 │   ├── package.json                       # Dependências Node
 │   └── package-lock.json
 │
 ├── 📁 docs/                               # Documentação do projeto
-│   ├── README.md                          # Índice da documentação
-│   ├── SETUP.md                           # Instalação e configuração
 │   ├── ARCHITECTURE.md                    # Arquitetura do sistema
 │   ├── API.md                             # Documentação dos endpoints
-│   ├── CONTRIBUTING.md                    # Guia de contribuição
-│   ├── TROUBLESHOOTING.md                 # Resolução de problemas
 │   └── FILE_STRUCTURE.md                  # Este arquivo
 │
 ├── .gitignore                             # Configuração Git
@@ -344,14 +342,7 @@ class Connection
 
 #### `docs/README.md`
 - Índice principal da documentação
-- Links para outros docs
 - Visão geral do projeto
-
-#### `docs/SETUP.md`
-- Como instalar projeto
-- Configuração de BD
-- Scripts iniciais
-- Troubleshooting básico
 
 #### `docs/ARCHITECTURE.md`
 - Arquitetura cliente-servidor
@@ -364,18 +355,6 @@ class Connection
 - Request/response examples
 - Status codes
 - Tratamento de erros
-
-#### `docs/CONTRIBUTING.md`
-- Como contribuir
-- Padrões de código
-- Git workflow
-- Commit messages
-
-#### `docs/TROUBLESHOOTING.md`
-- Problemas comuns
-- Soluções
-- Tips de debug
-- Quando contactar suporte
 
 #### `docs/FILE_STRUCTURE.md`
 - Este arquivo
@@ -506,9 +485,9 @@ VITE_APP_NAME=apLIS
 
 ### Backend (hardcoded em `Connection.php`)
 ```php
-$host = 'localhost';
-$db = 'seu_banco';
-$user = 'root';
+$host = '';
+$db = '';
+$user = '';
 $password = '';
 ```
 
@@ -521,7 +500,8 @@ $password = '';
 - [ ] Configurou banco de dados
 - [ ] Executou scripts SQL
 - [ ] Iniciou frontend (`npm run dev`)
-- [ ] Iniciou backend (`php -S localhost:3000`)
+- [ ] Iniciou backend php (`php -S localhost:3000 -t public`)
+- [ ] Iniciou backend js (`node api.js`)
 - [ ] Acessou `http://localhost:5173`
 - [ ] Consegue listar médicos/pacientes
 - [ ] Consegue criar novo registro
